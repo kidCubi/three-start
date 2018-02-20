@@ -12,6 +12,7 @@ class App {
         this.camera = null;
         this.controls = null;
         this.mainRaf = null;
+        this.flagResize = false;
     }
 
     init() {
@@ -29,6 +30,8 @@ class App {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(this.renderer.domElement);
+        
+        window.addEventListener('resize', () => { this.flagResize = true });
         this.animate();
     }
 
@@ -36,7 +39,13 @@ class App {
         this.mainRaf = requestAnimationFrame(this.animate);
         this.mesh.rotation.x += 0.04;
         this.mesh.rotation.y += 0.02;
-        this.renderer.render(this.scene, this.camera)
+        this.renderer.render(this.scene, this.camera);
+        if(this.flagResize) {
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            this.flagResize = !this.flagResize;
+        }
     }
 
 }
